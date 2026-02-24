@@ -146,7 +146,6 @@ All commands accept `--json` for machine-readable output and `--input key=value`
 | `json.get` | `file`, `path` | Read a value from a JSON file |
 | `json.set` | `file`, `path`, `value` | Set a value in a JSON file |
 | `env.get` | `name` | Read an environment variable |
-| `http` | `url`, `method`, `body`, `header_*` | Send an HTTP request |
 
 ## Structured Results
 
