@@ -1,0 +1,11 @@
+name: simple-echo
+description: A simple plan that echoes and greps
+steps:
+  - id: say_hello
+    run: echo "hello world"
+    outputs:
+      message: stdout
+  - id: grep_hello
+    run: echo "{{steps.say_hello.outputs.message}}" | grep hello
+    outputs:
+      found: stdout
