@@ -95,6 +95,9 @@ func executeStep(step plan.Step, ctx *RunContext, mode Mode) (*StepResult, error
 	if step.Run != "" {
 		return executeRunStep(step, ctx, mode, sr)
 	}
+	if step.HTTP != nil {
+		return executeHTTPStep(step, ctx, mode, sr)
+	}
 	return executeActionStep(step, ctx, mode, sr)
 }
 
@@ -147,6 +150,90 @@ func executeRunStep(step plan.Step, ctx *RunContext, mode Mode, sr *StepResult) 
 		for name, source := range step.Outputs {
 			if source == "stdout" {
 				ctx.TmplCtx.StepOutputs[step.ID][name] = strings.TrimSpace(shellResult.Stdout)
+			}
+		}
+	}
+
+	return sr, nil
+}
+
+func executeHTTPStep(step plan.Step, ctx *RunContext, mode Mode, sr *StepResult) (*StepResult, error) {
+	// Resolve templates in HTTP fields
+	resolvedURL, err := template.Resolve(step.HTTP.URL, ctx.TmplCtx)
+	if err != nil {
+		return nil, fmt.Errorf("resolving url for step %q: %w", step.ID, err)
+	}
+
+	method := step.HTTP.Method
+	if method == "" {
+		method = "GET"
+	}
+	sr.Command = fmt.Sprintf("%s %s", method, resolvedURL)
+
+	if mode == ModeExplain {
+		sr.Status = "explain"
+		registerPlaceholderOutputs(step, ctx)
+		return sr, nil
+	}
+
+	if step.Destructive && !ctx.Approve {
+		sr.Status = "blocked"
+		registerPlaceholderOutputs(step, ctx)
+		return sr, nil
+	}
+
+	if mode == ModeDryRun {
+		sr.Status = "dry-run"
+		sr.DryRunInfo = fmt.Sprintf("Would send %s to %s", method, resolvedURL)
+		registerPlaceholderOutputs(step, ctx)
+		return sr, nil
+	}
+
+	// Build action params from HTTP struct
+	params := map[string]string{
+		"url":    resolvedURL,
+		"method": method,
+	}
+
+	if step.HTTP.Body != "" {
+		resolvedBody, err := template.Resolve(step.HTTP.Body, ctx.TmplCtx)
+		if err != nil {
+			return nil, fmt.Errorf("resolving body for step %q: %w", step.ID, err)
+		}
+		params["body"] = resolvedBody
+	}
+
+	for k, v := range step.HTTP.Headers {
+		resolvedHeader, err := template.Resolve(v, ctx.TmplCtx)
+		if err != nil {
+			return nil, fmt.Errorf("resolving header %q for step %q: %w", k, step.ID, err)
+		}
+		params["header_"+k] = resolvedHeader
+	}
+
+	// Execute via the http action
+	act, _ := action.Get("http")
+	start := time.Now()
+	outputs, err := act.Execute(params)
+	sr.Duration = time.Since(start).Round(time.Millisecond).String()
+
+	if err != nil {
+		sr.Status = "failed"
+		sr.StderrRef = err.Error()
+		return sr, nil
+	}
+
+	sr.Status = "success"
+	sr.StdoutRef = outputs["stdout"]
+
+	// Extract outputs (stdout is the response body)
+	if step.Outputs != nil {
+		if ctx.TmplCtx.StepOutputs[step.ID] == nil {
+			ctx.TmplCtx.StepOutputs[step.ID] = map[string]string{}
+		}
+		for name, source := range step.Outputs {
+			if val, ok := outputs[source]; ok {
+				ctx.TmplCtx.StepOutputs[step.ID][name] = strings.TrimSpace(val)
 			}
 		}
 	}

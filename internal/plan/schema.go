@@ -16,6 +16,7 @@ type Input struct {
 }
 
 // Step defines a single step in a plan.
+// Exactly one of Run, Action, or HTTP must be set.
 type Step struct {
 	ID          string            `yaml:"id"`
 	Description string            `yaml:"description,omitempty"`
@@ -24,4 +25,15 @@ type Step struct {
 	Params      map[string]string `yaml:"params,omitempty"`
 	Outputs     map[string]string `yaml:"outputs,omitempty"`
 	Destructive bool              `yaml:"destructive,omitempty"`
+
+	// HTTP step fields
+	HTTP *HTTPRequest `yaml:"http,omitempty"`
+}
+
+// HTTPRequest defines an HTTP request step.
+type HTTPRequest struct {
+	URL     string            `yaml:"url"`
+	Method  string            `yaml:"method,omitempty"` // default: GET
+	Headers map[string]string `yaml:"headers,omitempty"`
+	Body    string            `yaml:"body,omitempty"` // template-resolved string
 }

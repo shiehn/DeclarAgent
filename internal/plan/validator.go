@@ -13,6 +13,7 @@ var knownActions = map[string]bool{
 	"json.get":    true,
 	"json.set":    true,
 	"env.get":     true,
+	"http":        true,
 }
 
 var templateRefRe = regexp.MustCompile(`\{\{steps\.([^.}]+)\.outputs\.([^}]+)\}\}`)
@@ -56,21 +57,40 @@ func Validate(p *Plan, providedInputs map[string]string) error {
 		}
 		seen[s.ID] = i
 
-		// run XOR action
+		// Exactly one of run, action, or http must be set
 		hasRun := s.Run != ""
 		hasAction := s.Action != ""
-		if hasRun && hasAction {
+		hasHTTP := s.HTTP != nil
+		count := 0
+		if hasRun {
+			count++
+		}
+		if hasAction {
+			count++
+		}
+		if hasHTTP {
+			count++
+		}
+		if count > 1 {
 			return &dagerrors.RunError{
 				Type:    dagerrors.ValidationError,
-				Message: fmt.Sprintf("step %q has both run and action", s.ID),
-				Hint:    "A step must have either run or action, not both",
+				Message: fmt.Sprintf("step %q has multiple of run/action/http", s.ID),
+				Hint:    "A step must have exactly one of: run, action, or http",
 			}
 		}
-		if !hasRun && !hasAction {
+		if count == 0 {
 			return &dagerrors.RunError{
 				Type:    dagerrors.ValidationError,
-				Message: fmt.Sprintf("step %q has neither run nor action", s.ID),
-				Hint:    "A step must have either run or action",
+				Message: fmt.Sprintf("step %q has none of run/action/http", s.ID),
+				Hint:    "A step must have exactly one of: run, action, or http",
+			}
+		}
+
+		// Validate HTTP step fields
+		if hasHTTP && s.HTTP.URL == "" {
+			return &dagerrors.RunError{
+				Type:    dagerrors.ValidationError,
+				Message: fmt.Sprintf("step %q: http requires a url", s.ID),
 			}
 		}
 
@@ -171,6 +191,12 @@ func stepStrings(s Step) []string {
 	strs = append(strs, s.Run)
 	for _, v := range s.Params {
 		strs = append(strs, v)
+	}
+	if s.HTTP != nil {
+		strs = append(strs, s.HTTP.URL, s.HTTP.Body)
+		for _, v := range s.HTTP.Headers {
+			strs = append(strs, v)
+		}
 	}
 	return strs
 }

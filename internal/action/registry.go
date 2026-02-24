@@ -16,6 +16,7 @@ func init() {
 	registry["json.get"] = &JSONGet{}
 	registry["json.set"] = &JSONSet{}
 	registry["env.get"] = &EnvGet{}
+	registry["http"] = NewHTTPAction()
 }
 
 // Get returns an action by name.

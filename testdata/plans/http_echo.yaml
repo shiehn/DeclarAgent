@@ -1,0 +1,11 @@
+name: http-echo
+description: Echo test using HTTP step
+inputs:
+  message:
+    description: Message to echo
+    default: hello
+steps:
+  - id: echo_msg
+    run: echo "{{inputs.message}}"
+    outputs:
+      msg: stdout

@@ -7,16 +7,19 @@ import (
 	"github.com/stevehiehn/declaragent/internal/mcp"
 )
 
+var mcpPlansDir string
+
 var mcpCmd = &cobra.Command{
 	Use:   "mcp",
 	Short: "Start MCP stdio server",
 	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		wd, _ := os.Getwd()
-		return mcp.Serve(wd)
+		return mcp.Serve(wd, mcpPlansDir)
 	},
 }
 
 func init() {
+	mcpCmd.Flags().StringVar(&mcpPlansDir, "plans", "", "Directory containing plan YAML files to expose as tools")
 	rootCmd.AddCommand(mcpCmd)
 }

@@ -18,9 +18,9 @@ type JSONRPCRequest struct {
 
 // JSONRPCResponse is a JSON-RPC 2.0 response.
 type JSONRPCResponse struct {
-	JSONRPC string `json:"jsonrpc"`
-	ID      any    `json:"id"`
-	Result  any    `json:"result,omitempty"`
+	JSONRPC string    `json:"jsonrpc"`
+	ID      any       `json:"id"`
+	Result  any       `json:"result,omitempty"`
 	Error   *RPCError `json:"error,omitempty"`
 }
 
@@ -31,7 +31,7 @@ type RPCError struct {
 }
 
 // Serve runs the MCP stdio server.
-func Serve(workDir string) error {
+func Serve(workDir string, plansDir string) error {
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Buffer(make([]byte, 1024*1024), 1024*1024)
 
@@ -46,7 +46,7 @@ func Serve(workDir string) error {
 			continue
 		}
 
-		resp := dispatch(req, workDir)
+		resp := dispatch(req, workDir, plansDir)
 		resp.JSONRPC = "2.0"
 		resp.ID = req.ID
 		writeResponse(os.Stdout, resp)
