@@ -1,6 +1,6 @@
 # DeclarAgent
 
-![DeclarAgent](declaragent_banner.png)
+![DeclarAgent](assets/declaragent_banner.png)
 
 **Declarative runbook executor for AI agents.**
 Validate, dry-run, and safely execute multi-step YAML workflows from any LLM tool-use loop.
@@ -48,6 +48,8 @@ declaragent mcp --plans ./plans
 ```
 
 ## Plan Schema
+
+![Plan Schema](assets/declaragent_plan_schema.png)
 
 Plans are YAML files with a simple structure. Each step does exactly one thing: run a shell command, call a built-in action, or send an HTTP request.
 
@@ -143,6 +145,8 @@ All commands accept `--json` for machine-readable output and `--input key=value`
 
 ## Structured Results
 
+![Structured Results](assets/declaragent_structured_results.png)
+
 Every execution returns a JSON result:
 
 ```json
@@ -170,6 +174,8 @@ Errors are typed for agent decision-making:
 | `TIMEOUT` | Yes | Step exceeded time limit |
 
 ## MCP Integration
+
+![MCP Integration](assets/declaragent_mcp.png)
 
 Run `declaragent mcp` to start a [Model Context Protocol](https://modelcontextprotocol.io/) stdio server.
 
