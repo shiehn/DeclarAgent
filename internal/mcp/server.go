@@ -30,8 +30,8 @@ type RPCError struct {
 	Message string `json:"message"`
 }
 
-// Serve runs the MCP stdio server.
-func Serve(workDir string, plansDir string) error {
+// ServeStdio runs the MCP stdio server (reads JSON-RPC from stdin, writes to stdout).
+func ServeStdio(workDir string, plansDir string) error {
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Buffer(make([]byte, 1024*1024), 1024*1024)
 
