@@ -123,7 +123,7 @@ func TestToolsListIncludesPlans(t *testing.T) {
 func TestShippedPlanExecution(t *testing.T) {
 	dir := t.TempDir()
 	planFile := filepath.Join(dir, "greet.yaml")
-	os.WriteFile(planFile, []byte("name: greet\ndescription: Say hello\ninputs:\n  name:\n    default: World\nsteps:\n  - id: s1\n    run: echo hello {{inputs.name}}\n    outputs:\n      msg: stdout\n"), 0o644)
+	os.WriteFile(planFile, []byte("name: greet\ndescription: Say hello\ninputs:\n  name:\n    default: World\nsteps:\n  - id: s1\n    run: echo hello ${{inputs.name}}\n    outputs:\n      msg: stdout\n"), 0o644)
 
 	params, _ := json.Marshal(map[string]any{
 		"name":      "greet",

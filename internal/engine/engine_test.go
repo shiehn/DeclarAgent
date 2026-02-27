@@ -101,7 +101,7 @@ func TestTemplateDataFlowsBetweenSteps(t *testing.T) {
 		Name: "test",
 		Steps: []plan.Step{
 			{ID: "s1", Run: "echo world", Outputs: map[string]string{"msg": "stdout"}},
-			{ID: "s2", Run: "echo hello {{steps.s1.outputs.msg}}"},
+			{ID: "s2", Run: "echo hello ${{steps.s1.outputs.msg}}"},
 		},
 	}
 	ctx := makeCtx(t, nil, false)

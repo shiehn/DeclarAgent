@@ -6,27 +6,27 @@ inputs:
     description: The commit message
 steps:
   - id: check_clean
-    description: Ensure working tree is clean
+    name: Ensure working tree is clean
     run: git diff --quiet && git diff --cached --quiet
   - id: get_branch
     run: git rev-parse --abbrev-ref HEAD
     outputs:
       branch: stdout
   - id: extract_ticket
-    run: echo "{{steps.get_branch.outputs.branch}}" | grep -oE '[A-Z]+-[0-9]+'
+    run: echo "${{steps.get_branch.outputs.branch}}" | grep -oE '[A-Z]+-[0-9]+'
     outputs:
       ticket_id: stdout
   - id: update_jira
     action: json.set
-    params:
+    with:
       file: fakejira.json
-      path: "{{steps.extract_ticket.outputs.ticket_id}}.status"
+      path: "${{steps.extract_ticket.outputs.ticket_id}}.status"
       value: "In Review"
   - id: append_changelog
     action: file.append
-    params:
+    with:
       path: CHANGELOG.md
-      content: "- [{{steps.extract_ticket.outputs.ticket_id}}] {{inputs.commit_message}}\n"
+      content: "- [${{steps.extract_ticket.outputs.ticket_id}}] ${{inputs.commit_message}}\n"
   - id: commit
-    run: git add -A && git commit -m "[{{steps.extract_ticket.outputs.ticket_id}}] {{inputs.commit_message}}"
+    run: git add -A && git commit -m "[${{steps.extract_ticket.outputs.ticket_id}}] ${{inputs.commit_message}}"
     destructive: true

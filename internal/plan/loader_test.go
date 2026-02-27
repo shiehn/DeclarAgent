@@ -40,16 +40,16 @@ inputs:
     default: staging
 steps:
   - id: s1
-    description: get version
+    name: get version
     run: echo 1.0
     outputs:
       version: stdout
   - id: s2
-    description: write config
+    name: write config
     action: file.write
-    params:
+    with:
       path: /tmp/out.txt
-      content: "{{steps.s1.outputs.version}}"
+      content: "${{steps.s1.outputs.version}}"
     destructive: true
 `)
 	p, err := Load(yaml)

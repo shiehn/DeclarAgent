@@ -16,8 +16,8 @@ var knownActions = map[string]bool{
 	"http":        true,
 }
 
-var templateRefRe = regexp.MustCompile(`\{\{steps\.([^.}]+)\.outputs\.([^}]+)\}\}`)
-var templateInputRe = regexp.MustCompile(`\{\{inputs\.([^}]+)\}\}`)
+var templateRefRe = regexp.MustCompile(`\$\{\{steps\.([^.}]+)\.outputs\.([^}]+)\}\}`)
+var templateInputRe = regexp.MustCompile(`\$\{\{inputs\.([^}]+)\}\}`)
 
 // Validate checks a plan for structural correctness.
 func Validate(p *Plan, providedInputs map[string]string) error {

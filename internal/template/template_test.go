@@ -9,7 +9,7 @@ func TestResolveInputs(t *testing.T) {
 		Inputs:      map[string]string{"name": "world"},
 		StepOutputs: map[string]map[string]string{},
 	}
-	result, err := Resolve("hello {{inputs.name}}", ctx)
+	result, err := Resolve("hello ${{inputs.name}}", ctx)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -25,7 +25,7 @@ func TestResolveStepOutputs(t *testing.T) {
 			"s1": {"version": "1.0"},
 		},
 	}
-	result, err := Resolve("v={{steps.s1.outputs.version}}", ctx)
+	result, err := Resolve("v=${{steps.s1.outputs.version}}", ctx)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -41,7 +41,7 @@ func TestResolveMultipleTemplates(t *testing.T) {
 			"s1": {"ver": "2.0"},
 		},
 	}
-	result, err := Resolve("deploy {{inputs.env}} {{steps.s1.outputs.ver}}", ctx)
+	result, err := Resolve("deploy ${{inputs.env}} ${{steps.s1.outputs.ver}}", ctx)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -55,7 +55,7 @@ func TestResolveErrorOnUnresolvedInput(t *testing.T) {
 		Inputs:      map[string]string{},
 		StepOutputs: map[string]map[string]string{},
 	}
-	_, err := Resolve("{{inputs.missing}}", ctx)
+	_, err := Resolve("${{inputs.missing}}", ctx)
 	if err == nil {
 		t.Fatal("expected error for unresolved input")
 	}
@@ -66,7 +66,7 @@ func TestResolveErrorOnUnresolvedStepRef(t *testing.T) {
 		Inputs:      map[string]string{},
 		StepOutputs: map[string]map[string]string{},
 	}
-	_, err := Resolve("{{steps.nope.outputs.val}}", ctx)
+	_, err := Resolve("${{steps.nope.outputs.val}}", ctx)
 	if err == nil {
 		t.Fatal("expected error for unresolved step ref")
 	}

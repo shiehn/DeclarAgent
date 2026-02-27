@@ -22,7 +22,7 @@ steps:
     outputs:
       message: stdout
   - id: check
-    run: echo "got {{steps.hello.outputs.message}}"
+    run: echo "got ${{steps.hello.outputs.message}}"
     outputs:
       result: stdout
 `)
@@ -53,7 +53,7 @@ steps:
     outputs:
       val: stdout
   - id: consume
-    run: echo "received {{steps.produce.outputs.val}}"
+    run: echo "received ${{steps.produce.outputs.val}}"
     outputs:
       result: stdout
 `)
@@ -80,20 +80,20 @@ name: actions-test
 steps:
   - id: write_json
     action: json.set
-    params:
+    with:
       file: `+filepath.Join(dir, "data.json")+`
       path: foo.bar
       value: hello
   - id: read_json
     action: json.get
-    params:
+    with:
       file: `+filepath.Join(dir, "data.json")+`
       path: foo.bar
     outputs:
       val: value
   - id: write_file
     action: file.write
-    params:
+    with:
       path: `+filepath.Join(dir, "out.txt")+`
       content: done
 `)
@@ -191,7 +191,7 @@ steps:
     run: echo hello
   - id: write_file
     action: file.write
-    params:
+    with:
       path: `+filepath.Join(dir, "should-not-exist.txt")+`
       content: nope
 `)
@@ -294,29 +294,29 @@ inputs:
     description: The commit message
 steps:
   - id: check_clean
-    description: Ensure working tree is clean
+    name: Ensure working tree is clean
     run: git diff --quiet && git diff --cached --quiet
   - id: get_branch
     run: git rev-parse --abbrev-ref HEAD
     outputs:
       branch: stdout
   - id: extract_ticket
-    run: echo "{{steps.get_branch.outputs.branch}}" | grep -oE '[A-Z]+-[0-9]+'
+    run: echo "${{steps.get_branch.outputs.branch}}" | grep -oE '[A-Z]+-[0-9]+'
     outputs:
       ticket_id: stdout
   - id: update_jira
     action: json.set
-    params:
+    with:
       file: fakejira.json
-      path: "{{steps.extract_ticket.outputs.ticket_id}}.status"
+      path: "${{steps.extract_ticket.outputs.ticket_id}}.status"
       value: "In Review"
   - id: append_changelog
     action: file.append
-    params:
+    with:
       path: CHANGELOG.md
-      content: "- [{{steps.extract_ticket.outputs.ticket_id}}] {{inputs.commit_message}}\n"
+      content: "- [${{steps.extract_ticket.outputs.ticket_id}}] ${{inputs.commit_message}}\n"
   - id: commit
-    run: git add -A && git commit -m "[{{steps.extract_ticket.outputs.ticket_id}}] {{inputs.commit_message}}"
+    run: git add -A && git commit -m "[${{steps.extract_ticket.outputs.ticket_id}}] ${{inputs.commit_message}}"
     destructive: true
 `)
 	p := loadPlan(t, filepath.Join(dir, "plan.yaml"))

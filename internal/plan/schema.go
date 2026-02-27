@@ -19,10 +19,10 @@ type Input struct {
 // Exactly one of Run, Action, or HTTP must be set.
 type Step struct {
 	ID          string            `yaml:"id"`
-	Description string            `yaml:"description,omitempty"`
+	Description string            `yaml:"name,omitempty"`
 	Run         string            `yaml:"run,omitempty"`
 	Action      string            `yaml:"action,omitempty"`
-	Params      map[string]string `yaml:"params,omitempty"`
+	Params      map[string]string `yaml:"with,omitempty"`
 	Outputs     map[string]string `yaml:"outputs,omitempty"`
 	Destructive bool              `yaml:"destructive,omitempty"`
 

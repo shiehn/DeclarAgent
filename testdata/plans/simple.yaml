@@ -6,6 +6,6 @@ steps:
     outputs:
       message: stdout
   - id: grep_hello
-    run: echo "{{steps.say_hello.outputs.message}}" | grep hello
+    run: echo "${{steps.say_hello.outputs.message}}" | grep hello
     outputs:
       found: stdout

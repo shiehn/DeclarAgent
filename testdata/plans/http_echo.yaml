@@ -6,6 +6,6 @@ inputs:
     default: hello
 steps:
   - id: echo_msg
-    run: echo "{{inputs.message}}"
+    run: echo "${{inputs.message}}"
     outputs:
       msg: stdout

@@ -1,12 +1,6 @@
-```
-▄▄▄▄▄▄               ▄▄               ▄▄▄▄
-███▀▀██▄             ██             ▄██▀▀██▄                    ██
-███  ███ ▄█▀█▄ ▄████ ██  ▀▀█▄ ████▄ ███  ███ ▄████ ▄█▀█▄ ████▄ ▀██▀▀
-███  ███ ██▄█▀ ██    ██ ▄█▀██ ██ ▀▀ ███▀▀███ ██ ██ ██▄█▀ ██ ██  ██
-██████▀  ▀█▄▄▄ ▀████ ██ ▀█▄██ ██    ███  ███ ▀████ ▀█▄▄▄ ██ ██  ██
-                                                ██
-                                              ▀▀▀
-```
+# DeclarAgent
+
+![DeclarAgent](declaragent_banner.png)
 
 **Declarative runbook executor for AI agents.**
 Validate, dry-run, and safely execute multi-step YAML workflows from any LLM tool-use loop.
@@ -24,7 +18,7 @@ LLM agents are great at reasoning but dangerous when executing. DeclarAgent give
 - **Destructive-step gating** — steps marked `destructive: true` require explicit `--approve`
 - **Structured JSON results** — every run returns machine-readable output with typed errors
 - **Built-in actions** — file I/O, JSON manipulation, and env access without shell gymnastics
-- **Template engine** — reference outputs from prior steps with `{{steps.<id>.outputs.<key>}}`
+- **Template engine** — reference outputs from prior steps with `${{steps.<id>.outputs.<key>}}`
 - **MCP server** — expose plans as directly callable tools over the Model Context Protocol
 - **Plan-as-tool** — drop YAML files in a directory, each becomes an MCP tool automatically
 
@@ -73,17 +67,17 @@ steps:
       result: stdout
 
   - id: build
-    run: docker build -t myapp:{{inputs.tag}} .
+    run: docker build -t myapp:${{inputs.tag}} .
 
   - id: check_health
     http:
-      url: "https://{{inputs.env}}.example.com/health"
+      url: "https://${{inputs.env}}.example.com/health"
       method: GET
     outputs:
       status: stdout
 
   - id: deploy
-    run: kubectl apply -f k8s/{{inputs.env}}.yaml
+    run: kubectl apply -f k8s/${{inputs.env}}.yaml
     destructive: true
 ```
 
@@ -105,7 +99,7 @@ Each step must have **exactly one** of `run`, `action`, or `http`.
     url: "https://api.example.com/data"    # required
     method: POST                            # default: GET
     headers:
-      Authorization: "Bearer {{inputs.token}}"
+      Authorization: "Bearer ${{inputs.token}}"
     body: '{"key": "value"}'               # template-resolved string
   outputs:
     response: stdout                        # response body
@@ -121,7 +115,7 @@ Each step must have **exactly one** of `run`, `action`, or `http`.
 | `steps[].run` | Shell command to execute |
 | `steps[].action` | Built-in action (alternative to `run`) |
 | `steps[].http` | HTTP request (alternative to `run` and `action`) |
-| `steps[].params` | Parameters passed to built-in actions |
+| `steps[].with` | Parameters passed to built-in actions |
 | `steps[].outputs` | Capture step output (e.g., `stdout`) |
 | `steps[].destructive` | If `true`, blocked unless `--approve` is passed |
 
@@ -194,9 +188,11 @@ declaragent mcp --plans ./plans
 
 This means an LLM agent can discover and invoke your plans without knowing anything about DeclarAgent's internal plan format.
 
-### MCP Configuration
+### Integrations
 
-Add to your Claude Code config (`.claude/settings.json`):
+#### Claude Code
+
+Add to `.claude/settings.json`:
 
 ```json
 {
@@ -208,6 +204,95 @@ Add to your Claude Code config (`.claude/settings.json`):
   }
 }
 ```
+
+#### Claude Desktop
+
+Add to `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) or `%APPDATA%\Claude\claude_desktop_config.json` (Windows):
+
+```json
+{
+  "mcpServers": {
+    "declaragent": {
+      "command": "/path/to/declaragent",
+      "args": ["mcp", "--plans", "/path/to/your/plans"]
+    }
+  }
+}
+```
+
+#### Cursor
+
+Add to `.cursor/mcp.json` in your project root:
+
+```json
+{
+  "mcpServers": {
+    "declaragent": {
+      "command": "/path/to/declaragent",
+      "args": ["mcp", "--plans", "/path/to/your/plans"]
+    }
+  }
+}
+```
+
+#### Windsurf
+
+Add to `~/.codeium/windsurf/mcp_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "declaragent": {
+      "command": "/path/to/declaragent",
+      "args": ["mcp", "--plans", "/path/to/your/plans"]
+    }
+  }
+}
+```
+
+#### GitHub Copilot (VS Code)
+
+Add to `.vscode/mcp.json` in your project root. Note: Copilot uses `"servers"` instead of `"mcpServers"`:
+
+```json
+{
+  "servers": {
+    "declaragent": {
+      "command": "/path/to/declaragent",
+      "args": ["mcp", "--plans", "/path/to/your/plans"]
+    }
+  }
+}
+```
+
+#### Amazon Q Developer
+
+Add to `~/.aws/amazonq/mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "declaragent": {
+      "command": "/path/to/declaragent",
+      "args": ["mcp", "--plans", "/path/to/your/plans"]
+    }
+  }
+}
+```
+
+#### ChatGPT
+
+ChatGPT requires a remotely accessible SSE endpoint. See [SSE Transport](#sse-transport) below, then add the public URL in ChatGPT's MCP settings.
+
+### SSE Transport
+
+For remote hosting or HTTP-based clients (e.g., ChatGPT), start the MCP server with SSE transport:
+
+```bash
+declaragent mcp --transport sse --port 19100 --plans ./plans
+```
+
+The server will be available at `http://localhost:19100/sse`. Expose this URL publicly (e.g., via a reverse proxy or tunnel) for clients that require a remote endpoint.
 
 ### Built-in MCP Tools
 
@@ -252,7 +337,7 @@ inputs:
     default: World
 steps:
   - id: greet
-    run: echo "Hello, {{inputs.name}}!"
+    run: echo "Hello, ${{inputs.name}}!"
     outputs:
       message: stdout
 ```
@@ -312,7 +397,7 @@ declaragent run plans/ip_lookup.yaml --json
 
 ### Plan 3: `plans/build_and_notify.yaml` — Multi-Step with Chaining
 
-Runs a build, then POSTs the result to a webhook. Demonstrates step chaining — the HTTP step uses the shell step's output via `{{steps.build.outputs.result}}`.
+Runs a build, then POSTs the result to a webhook. Demonstrates step chaining — the HTTP step uses the shell step's output via `${{steps.build.outputs.result}}`.
 
 ```yaml
 name: build-and-notify
@@ -329,11 +414,11 @@ steps:
 
   - id: notify
     http:
-      url: "{{inputs.webhook_url}}"
+      url: "${{inputs.webhook_url}}"
       method: POST
       headers:
         Content-Type: application/json
-      body: '{"event": "build_complete", "output": "{{steps.build.outputs.result}}"}'
+      body: '{"event": "build_complete", "output": "${{steps.build.outputs.result}}"}'
     outputs:
       response: stdout
 ```

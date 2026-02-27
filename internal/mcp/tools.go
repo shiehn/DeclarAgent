@@ -274,10 +274,10 @@ const schemaText = `Plan YAML Schema:
       default: string
   steps:
     - id: string (required, unique)
-      description: string
+      name: string (human-readable step label)
       run: string (shell command)
       action: string (built-in action name)
-      params: map[string]string (for actions)
+      with: map[string]string (for actions)
       http:
         url: string (required)
         method: string (default: GET)

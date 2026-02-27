@@ -5,8 +5,8 @@ import (
 	"regexp"
 )
 
-var stepRefRe = regexp.MustCompile(`\{\{steps\.([^.}]+)\.outputs\.([^}]+)\}\}`)
-var inputRefRe = regexp.MustCompile(`\{\{inputs\.([^}]+)\}\}`)
+var stepRefRe = regexp.MustCompile(`\$\{\{steps\.([^.}]+)\.outputs\.([^}]+)\}\}`)
+var inputRefRe = regexp.MustCompile(`\$\{\{inputs\.([^}]+)\}\}`)
 
 // Context holds available values for template resolution.
 type Context struct {
@@ -14,7 +14,7 @@ type Context struct {
 	StepOutputs map[string]map[string]string // stepID → outputName → value
 }
 
-// Resolve replaces all {{steps.X.outputs.Y}} and {{inputs.Z}} in s.
+// Resolve replaces all ${{steps.X.outputs.Y}} and ${{inputs.Z}} in s.
 func Resolve(s string, ctx *Context) (string, error) {
 	var resolveErr error
 

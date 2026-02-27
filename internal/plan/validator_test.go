@@ -64,7 +64,7 @@ func TestValidateRejectsForwardReferences(t *testing.T) {
 	p := &Plan{
 		Name: "test",
 		Steps: []Step{
-			{ID: "s1", Run: "echo {{steps.s2.outputs.msg}}"},
+			{ID: "s1", Run: "echo ${{steps.s2.outputs.msg}}"},
 			{ID: "s2", Run: "echo hi", Outputs: map[string]string{"msg": "stdout"}},
 		},
 	}
@@ -78,7 +78,7 @@ func TestValidateRejectsUnknownStepRefs(t *testing.T) {
 	p := &Plan{
 		Name: "test",
 		Steps: []Step{
-			{ID: "s1", Run: "echo {{steps.nonexistent.outputs.msg}}"},
+			{ID: "s1", Run: "echo ${{steps.nonexistent.outputs.msg}}"},
 		},
 	}
 	err := Validate(p, map[string]string{})
@@ -92,7 +92,7 @@ func TestValidateRejectsUnknownOutputRefs(t *testing.T) {
 		Name: "test",
 		Steps: []Step{
 			{ID: "s1", Run: "echo hi", Outputs: map[string]string{"msg": "stdout"}},
-			{ID: "s2", Run: "echo {{steps.s1.outputs.nonexistent}}"},
+			{ID: "s2", Run: "echo ${{steps.s1.outputs.nonexistent}}"},
 		},
 	}
 	err := Validate(p, map[string]string{})
@@ -137,7 +137,7 @@ func TestValidateAcceptsOptionalInputWithDefault(t *testing.T) {
 			"env": {Required: true, Default: "staging"},
 		},
 		Steps: []Step{
-			{ID: "s1", Run: "echo {{inputs.env}}"},
+			{ID: "s1", Run: "echo ${{inputs.env}}"},
 		},
 	}
 	err := Validate(p, map[string]string{})
