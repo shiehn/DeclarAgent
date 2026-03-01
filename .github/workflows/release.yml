@@ -1,0 +1,33 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Build binaries
+        run: |
+          mkdir -p dist
+          GOOS=darwin GOARCH=arm64 go build -o dist/declaragent-darwin-arm64 .
+          GOOS=darwin GOARCH=amd64 go build -o dist/declaragent-darwin-amd64 .
+          GOOS=linux GOARCH=amd64 go build -o dist/declaragent-linux-amd64 .
+          GOOS=linux GOARCH=arm64 go build -o dist/declaragent-linux-arm64 .
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: dist/*

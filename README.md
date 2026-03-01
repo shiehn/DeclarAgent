@@ -22,11 +22,38 @@ LLM agents are great at reasoning but dangerous when executing. DeclarAgent give
 - **MCP server** — expose plans as directly callable tools over the Model Context Protocol
 - **Plan-as-tool** — drop YAML files in a directory, each becomes an MCP tool automatically
 
+## Installation
+
+### Option A: Go Install
+
+```bash
+go install github.com/stevehiehn/declaragent@latest
+```
+
+### Option B: Pre-built Binary (macOS)
+
+Download the latest release from [GitHub Releases](https://github.com/shiehn/DeclarAgent/releases), then:
+
+```bash
+# Download (Apple Silicon)
+curl -L -o declaragent https://github.com/shiehn/DeclarAgent/releases/latest/download/declaragent-darwin-arm64
+
+# Or for Intel Mac
+# curl -L -o declaragent https://github.com/shiehn/DeclarAgent/releases/latest/download/declaragent-darwin-amd64
+
+# Make it executable
+chmod +x declaragent
+
+# Move to a directory in your PATH
+sudo mv declaragent /usr/local/bin/
+
+# Verify
+declaragent --help
+```
+
 ## Quick Start
 
 ```bash
-# Install
-go install github.com/stevehiehn/declaragent@latest
 
 # Validate a plan
 declaragent validate plan.yaml
@@ -130,6 +157,7 @@ Each step must have **exactly one** of `run`, `action`, or `http`.
 | `dry-run <plan.yaml>` | Simulate execution, resolve templates |
 | `run <plan.yaml>` | Execute the plan |
 | `mcp [--plans DIR]` | Start MCP stdio server |
+| `skill [--plans DIR]` | Generate a Claude Code Skill (SKILL.md) |
 
 All commands accept `--json` for machine-readable output and `--input key=value` for plan inputs.
 
@@ -311,6 +339,26 @@ These meta-tools are always available regardless of `--plans`:
 | `plan.dry_run` | Dry-run a plan |
 | `plan.run` | Execute a plan |
 | `plan.schema` | Return the plan YAML schema |
+
+## Claude Code Skills
+
+As an alternative to MCP, you can generate a [Claude Code Skill](https://docs.anthropic.com/en/docs/claude-code/skills) that teaches Claude Code how to use the DeclarAgent CLI directly. Skills are simpler and more token-efficient than MCP since they work through the CLI rather than a server.
+
+```bash
+# Generate a skill with a plan catalog
+declaragent skill --plans ./plans
+
+# Custom output directory and binary name
+declaragent skill --plans ./plans --output .claude/skills/declaragent --binary declaragent
+```
+
+This creates `.claude/skills/declaragent/SKILL.md` containing CLI usage instructions and a catalog of your available plans. Claude Code automatically discovers skills in `.claude/skills/`, so once generated, any user (or agent) can invoke it via `/declaragent`.
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `--plans` | *(none)* | Directory containing plan YAML files to catalog |
+| `--output` | `.claude/skills/declaragent` | Output directory for SKILL.md |
+| `--binary` | `declaragent` | Binary name used in generated instructions |
 
 ---
 
