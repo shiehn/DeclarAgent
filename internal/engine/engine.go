@@ -6,12 +6,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/stevehiehn/declaragent/internal/action"
-	"github.com/stevehiehn/declaragent/internal/artifact"
-	dagerrors "github.com/stevehiehn/declaragent/internal/errors"
-	"github.com/stevehiehn/declaragent/internal/plan"
-	"github.com/stevehiehn/declaragent/internal/runner"
-	"github.com/stevehiehn/declaragent/internal/template"
+	"github.com/shiehn/declaragent/internal/action"
+	"github.com/shiehn/declaragent/internal/artifact"
+	dagerrors "github.com/shiehn/declaragent/internal/errors"
+	"github.com/shiehn/declaragent/internal/plan"
+	"github.com/shiehn/declaragent/internal/runner"
+	"github.com/shiehn/declaragent/internal/template"
 )
 
 // Mode controls execution behavior.

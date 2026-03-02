@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"github.com/stevehiehn/declaragent/internal/plan"
+	"github.com/shiehn/declaragent/internal/plan"
 )
 
 var validateCmd = &cobra.Command{

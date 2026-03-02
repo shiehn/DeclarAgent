@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/stevehiehn/declaragent/internal/engine"
-	"github.com/stevehiehn/declaragent/internal/plan"
+	"github.com/shiehn/declaragent/internal/engine"
+	"github.com/shiehn/declaragent/internal/plan"
 )
 
 func TestSimpleShellPlanE2E(t *testing.T) {

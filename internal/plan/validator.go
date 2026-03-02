@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"regexp"
 
-	dagerrors "github.com/stevehiehn/declaragent/internal/errors"
+	dagerrors "github.com/shiehn/declaragent/internal/errors"
 )
 
 var knownActions = map[string]bool{

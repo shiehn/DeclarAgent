@@ -3,8 +3,8 @@ package engine
 import (
 	"testing"
 
-	"github.com/stevehiehn/declaragent/internal/plan"
-	"github.com/stevehiehn/declaragent/internal/template"
+	"github.com/shiehn/declaragent/internal/plan"
+	"github.com/shiehn/declaragent/internal/template"
 )
 
 func makeCtx(t *testing.T, inputs map[string]string, approve bool) *RunContext {

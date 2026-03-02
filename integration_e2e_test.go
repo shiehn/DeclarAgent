@@ -9,9 +9,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/stevehiehn/declaragent/internal/engine"
-	dagerrors "github.com/stevehiehn/declaragent/internal/errors"
-	"github.com/stevehiehn/declaragent/internal/plan"
+	"github.com/shiehn/declaragent/internal/engine"
+	dagerrors "github.com/shiehn/declaragent/internal/errors"
+	"github.com/shiehn/declaragent/internal/plan"
 )
 
 // startTestAPI creates a test HTTP server with multiple routes for E2E testing.

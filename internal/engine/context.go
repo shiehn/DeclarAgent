@@ -2,7 +2,7 @@ package engine
 
 import (
 	"github.com/google/uuid"
-	"github.com/stevehiehn/declaragent/internal/template"
+	"github.com/shiehn/declaragent/internal/template"
 )
 
 // RunContext holds state for a plan execution.

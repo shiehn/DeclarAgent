@@ -1,6 +1,6 @@
 package engine
 
-import dagerrors "github.com/stevehiehn/declaragent/internal/errors"
+import dagerrors "github.com/shiehn/declaragent/internal/errors"
 
 // Result is the structured output of a plan execution.
 type Result struct {

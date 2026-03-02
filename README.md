@@ -27,7 +27,7 @@ LLM agents are great at reasoning but dangerous when executing. DeclarAgent give
 ### Option A: Go Install
 
 ```bash
-go install github.com/stevehiehn/declaragent@latest
+go install github.com/shiehn/declaragent@latest
 ```
 
 ### Option B: Pre-built Binary (macOS)

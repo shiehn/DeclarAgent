@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/stevehiehn/declaragent/internal/engine"
-	"github.com/stevehiehn/declaragent/internal/plan"
+	"github.com/shiehn/declaragent/internal/engine"
+	"github.com/shiehn/declaragent/internal/plan"
 )
 
 type toolDef struct {

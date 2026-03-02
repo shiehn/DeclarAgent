@@ -6,8 +6,8 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"github.com/stevehiehn/declaragent/internal/engine"
-	"github.com/stevehiehn/declaragent/internal/plan"
+	"github.com/shiehn/declaragent/internal/engine"
+	"github.com/shiehn/declaragent/internal/plan"
 )
 
 var explainInputs []string

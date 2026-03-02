@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"github.com/stevehiehn/declaragent/internal/mcp"
+	"github.com/shiehn/declaragent/internal/mcp"
 )
 
 var (

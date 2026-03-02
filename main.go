@@ -1,6 +1,6 @@
 package main
 
-import "github.com/stevehiehn/declaragent/cmd"
+import "github.com/shiehn/declaragent/cmd"
 
 func main() {
 	cmd.Execute()
