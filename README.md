@@ -24,6 +24,8 @@ LLM agents are great at reasoning but dangerous when executing. DeclarAgent give
 
 ## Installation
 
+> **Requires [Go](https://go.dev/dl/).** This project is currently only tested on macOS.
+
 ```bash
 go install github.com/shiehn/declaragent@latest
 
@@ -31,7 +33,7 @@ go install github.com/shiehn/declaragent@latest
 declaragent --help
 ```
 
-> **Platform note:** Currently targeting macOS. Linux should work out of the box (the codebase uses `sh -c` with no OS-specific code). Windows requires WSL or a similar POSIX-compatible shell.
+> **Platform note:** Linux should work out of the box (the codebase uses `sh -c` with no OS-specific code). Windows requires WSL or a similar POSIX-compatible shell.
 
 ## Quick Start
 
