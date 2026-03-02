@@ -24,28 +24,8 @@ LLM agents are great at reasoning but dangerous when executing. DeclarAgent give
 
 ## Installation
 
-### Option A: Go Install
-
 ```bash
 go install github.com/shiehn/declaragent@latest
-```
-
-### Option B: Pre-built Binary (macOS)
-
-Download the latest release from [GitHub Releases](https://github.com/shiehn/DeclarAgent/releases), then:
-
-```bash
-# Download (Apple Silicon)
-curl -L -o declaragent https://github.com/shiehn/DeclarAgent/releases/latest/download/declaragent-darwin-arm64
-
-# Or for Intel Mac
-# curl -L -o declaragent https://github.com/shiehn/DeclarAgent/releases/latest/download/declaragent-darwin-amd64
-
-# Make it executable
-chmod +x declaragent
-
-# Move to a directory in your PATH
-sudo mv declaragent /usr/local/bin/
 
 # Verify
 declaragent --help
