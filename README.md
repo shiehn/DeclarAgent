@@ -31,6 +31,8 @@ go install github.com/shiehn/declaragent@latest
 declaragent --help
 ```
 
+> **Platform note:** Currently targeting macOS. Linux should work out of the box (the codebase uses `sh -c` with no OS-specific code). Windows requires WSL or a similar POSIX-compatible shell.
+
 ## Quick Start
 
 ```bash
@@ -180,6 +182,9 @@ Errors are typed for agent decision-making:
 | `SIDE_EFFECT_BLOCKED` | No | Destructive step blocked in dry-run |
 | `TRANSIENT` | Yes | Temporary failure, safe to retry |
 | `TIMEOUT` | Yes | Step exceeded time limit |
+| `TOOL_NOT_FOUND` | No | Unknown action referenced in step |
+| `PRECONDITION_FAILED` | No | Step precondition not met |
+| `CANCELLED` | No | Execution was cancelled |
 
 ## MCP Integration
 
