@@ -480,6 +480,22 @@ This runs `echo "build-ok"`, captures the output, then POSTs it to the webhook U
 go test ./...
 ```
 
+## CI / Releases
+
+All pushes to `main` and pull requests run tests automatically via GitHub Actions.
+
+To create a new release, tag a commit and push the tag:
+
+```bash
+git tag v0.2.0
+git push origin v0.2.0
+```
+
+This triggers the release workflow which:
+1. Runs the full test suite
+2. Builds binaries for macOS (arm64, amd64) and Linux (arm64, amd64)
+3. Creates a GitHub Release with the binaries attached and auto-generated release notes
+
 ## License
 
 See [LICENSE](LICENSE).
